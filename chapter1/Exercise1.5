@@ -1,0 +1,15 @@
+in applicative order
+
+(test 0 (p)) evaluates test to the procedure, and then evaluates (p) which has the procedure (p) applied and becomes (p) which is evaluated again to (p) and again to (p) and you end up in an infinite loop
+
+In normal order the arguments aren't applied until they are needed
+
+so (test 0 (p)) becomes
+
+(if (= 0 0)
+    0
+    (p))
+
+using the if special form the predicate (= 0 0) evaluates to true so 0 is returned
+
+so the difference is normal order returns 0 and applicative order goes into an infinite loop

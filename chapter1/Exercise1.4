@@ -1,0 +1,16 @@
+behavior of 
+(define (a-plus-abs-b a b)
+  ((if (> b 0) + -) a b))
+
+let's see what happens for
+(a-plus-abs-b 3 -4)
+first eval 3 and -4
+then apply body
+((if (> -4 0) + -) 3 -4)
+to evaluate the next combination we evaluate all the subexpressions
+evaluate (if (> -4 0) + -) and we get the procedure - then we evaluate 3 and -4 and get the combination
+
+(- 3 -4) which means 3 - - 4 aka 3 + 4 = 7
+now if instead of -4 I passed in +4 then
+(if (> 4 0) + -) would be + and the final combination would be
+(+ 3 4) aka 7...  the only trick is that the operator is a subexpression which generally is some item defined in the global environment which is then applied (including primitives) to the rest of the items in the combination.  But it can also be a combination itself which is evaluated to some item in the global environment (in this case + or -) which is then applied to the rest of the items in the combination.  Also this shows procedures can be returned from combinations due to them being first class objects.

@@ -1,0 +1,21 @@
+The problem is that (if is a special form.  So with
+
+(if predicate
+    a
+    b)
+
+a is only executed if predicate is true, otherwise b is executed.  But new-if is a funcion.  Prior to being called the arguments are evaluated
+
+(define (new-if predicate then-clause else-clause)
+  (cond (predicate then-clause)
+        (else else-clause)))
+
+will evaluate predicate then-clause and else-clause before calling it.  The if form will evaluate predicate and one of them-caluse or else-clause but new-if will evaluate all 3.  Rewriting sqrt-iter this is a problem.  If the guess is good-enough? the if statement will return guess and not execute sqrt-iter.  But because new-if is a function, it will constantly evaluate sqrt-iter prior to the function call....
+
+(sqrt-iter 1 number) will result in a call to new-if
+
+(new-if (good-enough? 1 number)
+        1
+        (sqrt-iter (improve 1 number)
+                   number))
+good-enough is not a problem, nor is the guess as that is just a number, but sqrt-iter is a problem, it will keep calling itself with an improved guess over and over again for all eternity.. 

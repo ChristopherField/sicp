@@ -1,0 +1,13 @@
+(define (square x)
+    (* x x))
+
+
+(define (sum-of-squares a b)
+    (+ (square a) (square b)))
+; ********** solution is max3
+(define (max3 a b c)
+    (cond ((= a (max a b c)) (sum-of-squares a (max b c)))
+          ((= b (max a b c)) (sum-of-squares b (max a c)))
+          (else (sum-of-squares c (max a b)))))
+
+
