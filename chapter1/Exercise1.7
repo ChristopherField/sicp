@@ -3,3 +3,23 @@ For very small numbers e.g. the sqrt of .000001 our test will not work because i
 With large numbers the problem is that they are often represented as floating points and with limited numbers of bits.  So if you try to do subtraction you lose the lower order terms.  E.g. in a really limited computer perhaps 1 million is represented as 1 times 10 to the 6th.  So if I get close (but still far) I might end up with some number like 1000.1 which is 1000200.01 but because cannot represent that entire number, I only see 1 times 10 to the 6th - 1 times 10 to the 6th which is 0 and is less than the tolerance.  Even though the real difference is over 200.  Granted 1 million is way too small for this to be an issue, but for larger numbers it is.  The numbers are represented imperfectly and some low order bits are lost, and these bits can hide pretty large differences.
 
 Another problem which I experienced is that as you get close to the square root the improve procedure results in less and less changes.  First you change large numbers e.g. 1 and 5 the first guess is 5/1 + 1 aka 6 / 2 so the next guess is 3.  But the closer you get the less the number changes until good-enough? detects a change small enough to be the tolerance.  If for a big number you are losing lower order terms and the difference between guess and (improve guess) is within those low order terms, you end up with (improve guess) spitting out the same guess and an infinite loop if the difference between (square guess) and x is larger than the tolerance in (good-enough?).  I plugged in a random large number and that's what happened to me, (improve guess) was spitting out the same number...but it was not (good-enough?)....
+
+; stop at less than .01% change
+(define (good-enough? previous-guess next-guess)
+        (< (abs (/ (- next-guess previous-guess) 
+                   previous-guess))
+            .001))
+
+I changed sqrt-iter to be
+
+
+(define (sqrt-iter guess x)
+    (if (good-enough? guess (improve guess x))
+        (improve guess x)
+        (sqrt-iter (improve guess x)
+                   x)))
+
+
+For smaller values it did seem to work better up to a point.  I was successfully able to compute the sqrt of .00000001 and get .00010000000000082464 which is pretty close to .0001.  Previously because the hard coded limit was .001 I was unable to get that close to the square root.  But for large numbers I am still off.  When I put in a large number 100000000000000000000000000000000000 the sqrt procedure completes, but is still nowhere near the correct sqrt.  When I use the standard good-enough? the procedure goes into an infinite loop.  The absolute value is bigger than .0001 but the difference in the average is totally lost, so it keeps getting the same guess back.  While now it finishes but gives me an answer nowhere near the true number.....
+
+But for some big numbers it works better with the original good-enough? the procedure would get into an infinite loop for 10000000000000000 while with the new improved good-enough I end up with the answer 100000000.09432504 which is pretty close to the true sqrt of 100000000.  Nevertheless square it and it is still quite a bit off 10000000018865008.

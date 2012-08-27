@@ -1,0 +1,33 @@
+Pretty easy to implement cube root, just do some renaming, change good-enough? to check the cube instead of the square, and most of the work of translating the formula is done in the improve procedure.
+
+(define (average x y)
+    (/ (+ x y) 2))
+
+(define (improve guess x)
+    (/ (+ (/ x (square guess))
+          (* 2 guess))
+       3))
+
+(define (square x)
+  (* x x))
+
+(define (cube x)
+    (* x x x))
+
+(define (good-enough? guess x)
+    (< (abs (- (cube guess) x)) 0.001))
+
+
+(define (curt-iter guess x)
+    (if (good-enough? guess x)
+        guess
+        (curt-iter (improve guess x)
+                   x)))
+
+; racket complains about sqrt being constant variable
+; forced to rename
+(define (curt x)
+    (curt-iter 1.0 x))
+
+
+
